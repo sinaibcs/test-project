@@ -1,1 +1,0 @@
-<img src="{{ $imageBase64 }}" alt="Your Image">
