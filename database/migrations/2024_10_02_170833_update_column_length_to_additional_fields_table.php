@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('additional_fields', function (Blueprint $table) {
+           $table->string('name_en', 150)->nullable()->change(); // Change length to 150
+           $table->string('name_bn', 150)->nullable()->change(); // Change length to 200
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('additional_fields', function (Blueprint $table) {
+           $table->string('name_en', 150)->nullable()->change(); // Change length to 150
+           $table->string('name_bn', 150)->nullable()->change(); // Change length to 200
+
+        });
+    }
+};

@@ -1,0 +1,89 @@
+version: "3.7"
+
+networks:
+    web-ctm-app-net:
+        name: my-ctm-web-app-net
+        driver: bridge
+
+#volumes:
+# ctm-app-backend:
+
+services:
+    # ctm-app service
+    backend-app-prod:
+        #image: devibcs/ctm-apps:backend-service-1.0
+        container_name: ctm-backend-prod
+        image: "ctm-app-backend-prod"
+
+        build:
+            context: .
+            args:
+                - APP_ENV=${APP_ENV}
+        restart: always
+        environment:
+            - TZ=Asia/Dhaka
+            #DB_HOST: mariadb
+            #DB_PORT: 3306
+            #DB_DATABASE: ctm
+            #DB_USERNAME: root
+            #DB_PASSWORD: root
+        ports:
+            - "8090:80"
+        networks:
+            - web-ctm-app-net
+    #      volumes:
+    #        - ctm-app-backend:/var/www/storage/app/public
+
+    #queue:
+    # build: .
+    #environment:
+    # - CONTAINER_ROLE=queue
+    #volumes:
+    # - .:/var/www
+    #networks:
+    # - web-ctm-app-net
+
+    #scheduler:
+    # build: .
+    #environment:
+    # - CONTAINER_ROLE=scheduler
+    #volumes:
+    # - .:/var/www
+    #networks:
+    # - web-ctm-app-net
+
+    # ctm-mysql services
+    # mariadb:
+    #   image: mysql:8.0
+    #   ports:
+    #     - 3306:3306
+    #   environment:
+    #     - MYSQL_ROOT_PASSWORD: root
+    #     - MYSQL_USER: root
+    #     - MYSQL_PASSWORD: root
+    #   volumes:
+    #     - db-storage:/var/lib/mysql
+    #   networks:
+    #     - web-app-ctm-net
+
+    # PhpMyAdmin service
+    # phpmyadmin:
+    #   image: phpmyadmin/phpmyadmin
+    #   environment:
+    #     PMA_HOST: mariadb
+    #     PMA_PORT: 3306
+    #   ports:
+    #     - 8081:80
+    #   depends_on:
+    #     - mariadb
+    #   networks:
+    #     - web-app-ctm-net
+
+    # frontend-app:
+    #   #image: devibcs/ctm-apps:ctm-prod-frontend-service-1.0.0
+    #   image: frontend-service:1.0
+    #   ports:
+    #     - 8080:80
+    #   networks:
+    #     - web-ctm-app-net
+###End Of File

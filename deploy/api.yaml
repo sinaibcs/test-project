@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ctm-app-backend-prod
+  name: ctm-app-backend-prod
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: ctm-app-backend-prod
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ctm-app-backend-prod
+    spec:
+      hostAliases:                  # Add this section for custom host to IP mapping
+      - ip: "192.168.66.2"
+        hostnames:
+        - "prportal.nidw.gov.bd"
+      imagePullSecrets:
+        - name: docker-reg-secret
+      containers:
+      - name: ctm-backend-prod
+        #image: devopsibcs/ngpims-hr:v10
+        image: devopsibcs/ctm-app-backend-prod:TAG
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always
+        resources:
+            limits:
+              cpu: "3000m"
+              memory: 3200Mi
+            requests:
+              cpu: "1500m"
+              memory: 1500Mi
+        #workingDir: /var/www  # Set the working directory to /var/www
+        #command: ["/bin/sh", "-c", "php artisan queue:listen --timeout=0"]
+        #livenessProbe:
+        #  failureThreshold: 5
+         # httpGet:
+         #   path: /actuator/health/liveness
+         #   port: 9005
+         #   scheme: HTTP
+         # initialDelaySeconds: 5
+         # periodSeconds: 10
+         # successThreshold: 1
+         # timeoutSeconds: 10
+       # readinessProbe:
+         # failureThreshold: 5
+        #  httpGet:
+        #    path: /actuator/health/readiness
+          #  port: 9005
+         #   scheme: HTTP
+         # initialDelaySeconds: 5
+         # periodSeconds: 10
+         # successThreshold: 1
+         # timeoutSeconds: 10
+        env:   # Setting Enviornmental Variables
+        - name: TZ
+          value: Asia/Dhaka
+        
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ctm-app-backend-prod
+  name: ctm-backend-prod-cip-svc
+spec:
+  ports:
+  - name: ctm-backend-prod-in-port
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: ctm-app-backend-prod
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ctm-app-backend-prod
+  name: ctm-backend-prod-svc
+spec:
+  ports:
+  - name: ctm-backend-prod-out-port
+    port: 80
+    targetPort: 80
+    nodePort: 30045
+    protocol: TCP
+  selector:
+    app: ctm-app-backend-prod
+  type: NodePort
+status:
+  loadBalancer: {}
